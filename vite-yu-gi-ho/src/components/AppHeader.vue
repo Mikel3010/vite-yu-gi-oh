@@ -20,6 +20,7 @@ export default{
     height: 6.25rem;
     display: flex;
     align-items: center;
+    background-color: white;
 }
 .logo{
     height: 1.875rem;
@@ -30,5 +31,4 @@ export default{
 .logo img{
     width: 100%;
 }
-
 </style>
