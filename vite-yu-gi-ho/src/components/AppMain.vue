@@ -7,29 +7,41 @@ export default{
     data(){
         return{
             cards:[],
-            img:[]
+            archetypes:[],
+            selectedArchetype: ''
         }
     },
     created(){
-        axios.get('https://db.ygoprodeck.com/api/v7/cardinfo.php')
-        .then((response)=>{
-            console.log(response)
-            this.cards= response.data.data
-            this.img = response.data.data.card_images
+        this.fetchArchetypes()
+    },
+    methods: {
+        fetchArchetypes() {
+        axios.get('https://db.ygoprodeck.com/api/v7/archetypes.php')
+        .then(response => {
+          this.archetypes = response.data
         })
-    }
+        .catch(error => console.error(error))
+        },
+        fetchCardsByArchetype(archetype) {
+        axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?archetype=${archetype}`)
+        .then(response => {
+          this.cards = response.data.data
+          const headerCard = document.querySelector('.header_card')
+        headerCard.textContent = `Found ${this.cards.length} cards`
+        })
+        .catch(error => console.error(error))
+        }
+    },
 }
 </script>
 <template>
 <div>
-    <select name="Tipo" id="Tipo" class="select">
-        <option value="Alien">Alien</option>
-        <option value="Magic">Magic</option>
-        <option value="Fire">Fire</option>
+    <select class="select" id="Tipo" v-model="selectedArchetype" @change="fetchCardsByArchetype(selectedArchetype)">
+        <option  v-for="archetype in archetypes" :value="archetype.archetype_name">{{ archetype.archetype_name }}></option>
     </select>
 </div>
 <div class="main_container">
-<div class="header_card">Found 39 cards</div>
+<div class="header_card"></div>
 <div class="container_cards">
     <div class="cards" v-for="card in cards">
         <div class="card">
@@ -83,6 +95,14 @@ export default{
     text-align: center;  
     background-color: #d48f38;
     margin-left: 10px;
-    margin-right: 10px;   
+    margin-right: 10px;  
+}
+.info_card{
+    h3{
+        padding: 10px 0;
+    }
+    p{
+        padding: 10px 0;
+    }
 }
 </style>
